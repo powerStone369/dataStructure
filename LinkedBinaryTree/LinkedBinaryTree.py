@@ -6,7 +6,6 @@ class Tree:
       raise NotImplementedError('must be implemented')
     def __ne__(self, other):
       return not (self == other)
-
   def root(self):
     raise NotImplementedError('must be implemented')
   def parent(self, p):
@@ -17,35 +16,24 @@ class Tree:
     raise NotImplementedError('must be implemented')
   def __len__(self):
     raise NotImplementedError('must be implemented')
-
-## true/false 값을 return
   def is_root(self, p):
     return self.root() == p
   def is_leaf(self, p):
     return self.num_children(p) == 0
   def is_empty(self):
     return len(self) == 0
-
-#현재 노드로부터 root까지 길이 -> 부모노드로 가면서 1씩 계속 더해준다. 루트 갈때까지. 
   def depth(self, p):
     if self.is_root(p):
       return 0
     else:
       return 1 + self.depth(self.parent(p))
-
-#모든포지션중에서 leaf골라서 depth가 가장 깊은것 리턴
   def _height1(self):
     return max(self.depth(p) for p in self.positions() if self.is_leaf(p))
-    
-
-#자녀노드들 중 높이가 가장 큰것 + 1
   def _height2(self, p):
     if self.is_leaf(p):
       return 0
     else:
       return 1 + max(self._height2(c) for c in self.children(p))
-
-  
   def height(self, p=None):
     if p is None:
       p = self.root()
@@ -54,45 +42,31 @@ class Tree:
   def preorder(self):
     if not self.is_empty():
       for p in self._subtree_preorder(self.root()):
-        print("프리오더p 앞까지옴")
         yield p
-        print("프리오더p 뒤까지옴")
 
   def _subtree_preorder(self, p):
-    print("서브트리p 앞까지옴")
     yield p
-    print("서브트리p 뒤")
     for c in self.children(p):
-      print("칠드런들어감")
       for other in self._subtree_preorder(c):
-        print("other 앞까지옴")
         yield other
-        print("other 뒤임")
 
 
-  def inorder(self): # homework!
+  def inorder(self): 
     if not self.is_empty():
       for p in self._subtree_inorder(self.root()):       
         yield p
         
-
-  def _subtree_inorder(self, p): # homework! 
+ 
+  def _subtree_inorder(self, p): 
       for c in self.children(p):
-        #1 자기노드를 방문하기 위한 조건문. 왼쪽 자식노드로 가지 않을경우 yield p 해준다 (혼자서는 완벽하지 않으므로 #3를 꼭 붙여줘야 한다)
         if c != self.left(p) :
           yield p   
         for other in self._subtree_inorder(c): 
           yield other
-       #2 리프노드에서 p yield를 해준다. 순서는 #1에서 처리하였음
       if self.is_leaf(p) == True:
        yield p  
-       #3 #1에서 우측 자식노드가 없는경우에는 #1을 실행하지 못하므로 그경우를 대비해 우측 자식노드가 없을때 자기노드를 yield해준다 
       elif self.right(p) == None:
-       yield p   
-     
-
-    
-  
+       yield p     
 
   def positions(self): 
     return self.inorder()
